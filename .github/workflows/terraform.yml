@@ -1,15 +1,17 @@
-name: Terraform AWS Deploy
+name: Terraform AWS Labs
 
 on:
   push:
     branches:
-      - "*"   # qualquer branch ativa o workflow
+      - main          # Apply ou Destroy só acontece quando há push/merge na main
 
 jobs:
   terraform:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
@@ -17,16 +19,30 @@ jobs:
       - name: Terraform Init
         run: terraform init
 
-      - name: Terraform Apply
-        run: terraform apply -auto-approve
+      - name: Terraform Plan
+        run: terraform plan
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: "us-east-1"
 
-      - name: Comment on Issue (opcional)
-        if: github.event_name == 'push'
+      - name: Terraform Apply or Destroy
         run: |
-          gh issue comment 1 --body "Lab aplicado com sucesso no branch ${{ github.ref_name }}"
+          if [[ "${GITHUB_REF_NAME}" == "destroy" ]]; then
+            echo "Rodando terraform destroy..."
+            terraform destroy -auto-approve
+          else
+            echo "Rodando terraform apply..."
+            terraform apply -auto-approve
+          fi
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Comment on Issue #1
+        run: |
+          if [[ "${GITHUB_REF_NAME}" == "destroy" ]]; then
+            gh issue comment 1 --body "Todos os recursos do lab foram destruídos na AWS (branch destroy mergeada na main)."
+          else
+            gh issue comment 1 --body "Lab aplicado com sucesso na AWS a partir da branch main."
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
