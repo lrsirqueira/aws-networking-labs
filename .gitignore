@@ -1,0 +1,15 @@
+# Diretórios locais do Terraform
+.terraform/
+.terraform.lock.hcl
+
+# Arquivos de estado (contêm informações sensíveis!)
+*.tfstate
+*.tfstate.backup
+
+# Logs e crash reports
+crash.log
+*.tfvars
+
+# Arquivos locais que não devem ir pro git
+*.backup
+*.tmp
