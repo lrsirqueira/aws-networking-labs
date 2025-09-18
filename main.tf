@@ -7,6 +7,15 @@ terraform {
       version = "~> 5.0"
     }
   }
+
+  # Backend S3 para armazenar o state
+  backend "s3" {
+    bucket         = "aws-networking-labs-terraform-state-lrsirqueira"
+    key            = "terraform.tfstate"
+    region         = "us-east-1"
+    dynamodb_table = "terraform-locks-aws-networking-labs"
+    encrypt        = true
+  }
 }
 
 provider "aws" {
@@ -20,6 +29,8 @@ locals {
   common_tags = {
     Environment = "Lab"
     Owner       = "Luis"
+    Project     = "AWS-Networking-Specialty"
+    ManagedBy   = "Terraform"
   }
 }
 
@@ -42,6 +53,7 @@ resource "aws_vpc" "lab_vpc" {
 resource "aws_subnet" "public_subnet" {
   vpc_id                  = aws_vpc.lab_vpc.id
   cidr_block              = "10.0.1.0/24"
+  availability_zone       = data.aws_availability_zones.available.names[0]
   map_public_ip_on_launch = true
 
   tags = merge(local.common_tags, {
@@ -79,6 +91,15 @@ resource "aws_route_table_association" "public_assoc" {
 }
 
 # *********************************************************************************************#
+# ******************************* Data Sources *************************************************#
+# *********************************************************************************************#
+
+# Obter zonas de disponibilidade
+data "aws_availability_zones" "available" {
+  state = "available"
+}
+
+# *********************************************************************************************#
 # ******************************* Outputs *****************************************************#
 # *********************************************************************************************#
 
@@ -87,7 +108,22 @@ output "vpc_id" {
   value       = aws_vpc.lab_vpc.id
 }
 
+output "vpc_cidr" {
+  description = "CIDR block da VPC"
+  value       = aws_vpc.lab_vpc.cidr_block
+}
+
 output "subnet_id" {
   description = "ID da Subnet pública"
   value       = aws_subnet.public_subnet.id
+}
+
+output "internet_gateway_id" {
+  description = "ID do Internet Gateway"
+  value       = aws_internet_gateway.igw.id
+}
+
+output "availability_zone" {
+  description = "Zona de disponibilidade utilizada"
+  value       = aws_subnet.public_subnet.availability_zone
 }

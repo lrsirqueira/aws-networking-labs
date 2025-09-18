@@ -13,36 +13,69 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
+        uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Init
         run: terraform init
 
-      - name: Terraform Plan
-        run: terraform plan
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-      - name: Terraform Apply or Destroy
+      - name: Determine Action from Commit Message
+        id: action
         run: |
-          if [[ "${GITHUB_REF_NAME}" == "destroy" ]]; then
-            echo "Rodando terraform destroy..."
-            terraform destroy -auto-approve
+          COMMIT_MSG="${{ github.event.head_commit.message }}"
+          echo "Commit message: $COMMIT_MSG"
+          
+          if [[ "$COMMIT_MSG" == *"[destroy]"* ]] || [[ "$COMMIT_MSG" == *"destroy"* ]]; then
+            echo "action=destroy" >> $GITHUB_OUTPUT
+            echo "Ação detectada: DESTROY"
           else
-            echo "Rodando terraform apply..."
-            terraform apply -auto-approve
+            echo "action=apply" >> $GITHUB_OUTPUT
+            echo "Ação detectada: APPLY"
           fi
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Terraform Plan
+        run: |
+          if [ "${{ steps.action.outputs.action }}" == "destroy" ]; then
+            echo "📋 Planejando destruição de recursos..."
+            terraform plan -destroy -out=tfplan
+          else
+            echo "📋 Planejando criação/atualização de recursos..."
+            terraform plan -out=tfplan
+          fi
+
+      - name: Terraform Apply/Destroy
+        run: |
+          if [ "${{ steps.action.outputs.action }}" == "destroy" ]; then
+            echo "🔥 Destruindo recursos..."
+            terraform apply -auto-approve tfplan
+          else
+            echo "🚀 Aplicando recursos..."
+            terraform apply -auto-approve tfplan
+          fi
 
       - name: Comment on Issue #1
         run: |
-          if [[ "${GITHUB_REF_NAME}" == "destroy" ]]; then
-            gh issue comment 1 --body "Todos os recursos do lab foram destruídos na AWS (branch destroy mergeada na main)."
+          if [ "${{ steps.action.outputs.action }}" == "destroy" ]; then
+            gh issue comment 1 --body "🔥 **Recursos destruídos com sucesso!**
+            
+            Todos os recursos do lab foram removidos da AWS.
+            
+            **Commit:** ${{ github.event.head_commit.message }}
+            **SHA:** ${{ github.sha }}"
           else
-            gh issue comment 1 --body "Lab aplicado com sucesso na AWS a partir da branch main."
+            gh issue comment 1 --body "🚀 **Lab aplicado com sucesso!**
+            
+            Recursos criados/atualizados na AWS.
+            
+            **Commit:** ${{ github.event.head_commit.message }}
+            **SHA:** ${{ github.sha }}"
+          fi
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
