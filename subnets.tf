@@ -5,7 +5,7 @@ resource "aws_subnet" "public" {
   availability_zone               = "us-east-1a"
   ipv6_cidr_block                = cidrsubnet(aws_vpc.main.ipv6_cidr_block, 8, 0)
   assign_ipv6_address_on_creation = false
-  map_public_ip_on_launch        = false
+  map_public_ip_on_launch        = true
 
   tags = {
     Name = "my-first-public-subnet"
