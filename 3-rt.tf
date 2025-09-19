@@ -45,13 +45,3 @@ resource "aws_route_table_association" "public_assoc-v6" {
 ###############
 ### Outputs
 ###############
-
-output "public_subnet_id" {
-  description = "ID da Routing Table pública"
-  value       = aws_route_table.public_rt.id
-}
-
-output "public_subnet_id" {
-  description = "ID da Routing Table privada"
-  value       = aws_route_table.private_rt.id
-}
