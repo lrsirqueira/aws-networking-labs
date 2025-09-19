@@ -28,3 +28,30 @@ resource "aws_subnet" "private_subnet" {
     Name = "my-first-private-subnet"
   })
 }
+
+
+###############
+### Outputs
+###############
+
+
+# Subnet Outputs
+output "public_subnet_id" {
+  description = "ID da subnet pública"
+  value       = aws_subnet.public_subnet.id
+}
+
+output "public_subnet_ipv6_cidr" {
+  description = "CIDR block IPv6 da subnet pública"
+  value       = aws_subnet.public_subnet.ipv6_cidr_block
+}
+
+output "private_subnet_id" {
+  description = "ID da subnet privada"
+  value       = aws_subnet.private_subnet.id
+}
+
+output "private_subnet_ipv6_cidr" {
+  description = "CIDR block IPv6 da subnet privada"
+  value       = aws_subnet.private_subnet.ipv6_cidr_block
+}

@@ -13,3 +13,16 @@ resource "aws_vpc" "my-first-vpc" {
     Name = "lab-vpc"
   })
 }
+
+###############
+### Outputs
+###############
+output "vpc_id" {
+  description = "ID da VPC"
+  value       = aws_vpc.my-first-vpc.id
+}
+
+output "vpc_cidr_block" {
+  description = "CIDR block IPv4 da VPC"
+  value       = aws_vpc.my-first-vpc.cidr_block
+}
