@@ -12,16 +12,6 @@ output "vpc_cidr" {
   value       = aws_vpc.my-first-vpc.cidr_block
 }
 
-output "subnet_id" {
-  description = "ID da Subnet pública"
-  value       = aws_subnet.public_subnet.id
-}
-
-output "internet_gateway_id" {
-  description = "ID do Internet Gateway"
-  value       = aws_internet_gateway.igw.id
-}
-
 output "availability_zone" {
   description = "Zona de disponibilidade utilizada"
   value       = aws_subnet.public_subnet.availability_zone
