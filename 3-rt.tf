@@ -37,7 +37,7 @@ resource "aws_route_table_association" "private_assoc-v4" {
   route_table_id = aws_route_table.private_rt.id
 }
 
-resource "aws_route_table_association" "public_assoc-v6" {
+resource "aws_route_table_association" "private_assoc-v6" {
   subnet_id      = aws_subnet.private_subnet.ipv6_cidr_block
   route_table_id = aws_route_table.public_rt.id
 }
