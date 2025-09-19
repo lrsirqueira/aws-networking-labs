@@ -4,7 +4,7 @@
 
 # Route Table para a subnet pública
 resource "aws_route_table" "public_rt" {
-  vpc_id = aws_vpc.lab_vpc.id
+  vpc_id = aws_vpc.my-first-vpc.id
 
   tags = merge(local.common_tags, {
     Name = "lab-public-rt"

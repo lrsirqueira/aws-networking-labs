@@ -4,7 +4,7 @@
 
 # Internet Gateway
 resource "aws_internet_gateway" "igw" {
-  vpc_id = aws_vpc.lab_vpc.id
+  vpc_id = aws_vpc.my-first-vpc.id
 
   tags = merge(local.common_tags, {
     Name = "lab-igw"
