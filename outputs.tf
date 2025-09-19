@@ -4,12 +4,12 @@
 
 output "vpc_id" {
   description = "ID da VPC criada"
-  value       = aws_vpc.lab_vpc.id
+  value       = aws_vpc.my-first-vpc.id
 }
 
 output "vpc_cidr" {
   description = "CIDR block da VPC"
-  value       = aws_vpc.lab_vpc.cidr_block
+  value       = aws_vpc.my-first-vpc.cidr_block
 }
 
 output "subnet_id" {
