@@ -33,7 +33,7 @@ locals {
     Owner       = "Luis"
     Project     = "AWS-Networking-Specialty"
     ManagedBy   = "Terraform"
-    lab         = ""lab
+    lab         = "lab"
   }
 }
 
