@@ -32,7 +32,9 @@ O Terraform utiliza um backend S3 para armazenar o state file, garantindo consis
 
 ---
 
-## 🚀 Como usar
+## 🚀 Fluxo Completo de Uso
+
+### **Cenário: Estudar um novo tópico**
 
 ### 1. Clone o repositório:
 ```bash
@@ -40,33 +42,56 @@ git clone https://github.com/lrsirqueira/aws-networking-labs.git
 cd aws-networking-labs
 ```
 
-### 2. Para aplicar um laboratório:
+### 2. Criar e estudar um lab:
 ```bash
-# Mude para a branch do lab desejado
-git checkout vpc-basico
-
-# Faça suas modificações (se necessário)
-# ...
-
-# Merge na main para aplicar
+# Estar na branch main
 git checkout main
-git merge vpc-basico
+
+# Fazer modificações nos arquivos Terraform (main.tf, etc.)
+# ... editar arquivos conforme o lab ...
+
+# Commit e push para aplicar os recursos
+git add .
+git commit -m "Implementar lab de VPC Peering"
 git push origin main
+# ✅ Recursos serão criados automaticamente
 ```
 
-### 3. Para destruir todos os recursos:
+### 3. Salvar o lab numa branch específica:
 ```bash
-# Crie/use a branch destroy
-git checkout -b destroy
+# Salvar o lab atual numa branch nomeada
+git checkout -b vpc-peering  # ou nome descritivo do seu lab
+git push origin vpc-peering
 
-# Faça um commit com a palavra "destroy" na mensagem
-git commit --allow-empty -m "Destruir recursos do lab [destroy]"
-
-# Merge na main para destruir
+# Voltar para main
 git checkout main
-git merge destroy
-git push origin main
 ```
+
+### 4. Destruir recursos após estudo:
+```bash
+# Fazer commit com [destroy] para limpar ambiente
+git commit --allow-empty -m "Finalizar estudo do lab [destroy]"
+git push origin main
+# 🔥 Recursos serão destruídos automaticamente
+```
+
+### 5. Recriar um lab salvo (futuro):
+```bash
+# Pegar uma branch de lab existente
+git checkout vpc-peering  # nome da branch do lab
+
+# Aplicar na main novamente
+git checkout main
+git merge vpc-peering
+git push origin main
+# ✅ Recursos do lab serão recriados
+```
+
+### **Resumo do fluxo:**
+1. **Criar/Modificar** → commit na main → recursos aplicados
+2. **Salvar lab** → criar branch específica
+3. **Destruir** → commit com `[destroy]` → recursos removidos  
+4. **Recriar lab** → merge da 
 
 ---
 

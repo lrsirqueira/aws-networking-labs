@@ -1,0 +1,18 @@
+# *********************************************************************************************#
+# ******************************* Route Table Resources ****************************************#
+# *********************************************************************************************#
+
+# Route Table para a subnet pública
+resource "aws_route_table" "public_rt" {
+  vpc_id = aws_vpc.lab_vpc.id
+
+  tags = merge(local.common_tags, {
+    Name = "lab-public-rt"
+  })
+}
+
+# Associação da Route Table à subnet pública
+resource "aws_route_table_association" "public_assoc" {
+  subnet_id      = aws_subnet.public_subnet.id
+  route_table_id = aws_route_table.public_rt.id
+}
