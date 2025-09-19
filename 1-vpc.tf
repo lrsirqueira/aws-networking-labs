@@ -3,8 +3,9 @@
 # *********************************************************************************************#
 
 # Criação de uma VPC básica para laboratório
-resource "aws_vpc" "lab_vpc" {
-  cidr_block           = "10.0.0.0/16"
+resource "aws_vpc" "My First VPC" {
+  cidr_block           = "192.168.0.0/16"
+  assign_generated_ipv6_cidr_block = true
   enable_dns_support   = true
   enable_dns_hostnames = true
 
