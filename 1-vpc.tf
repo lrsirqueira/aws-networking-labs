@@ -26,3 +26,8 @@ output "vpc_cidr_block" {
   description = "CIDR block IPv4 da VPC"
   value       = aws_vpc.my-first-vpc.cidr_block
 }
+
+output "vpc_ipv6_cidr_block" {
+  description = "CIDR block IPv6 da VPC"
+  value       = aws_vpc.my-first-vpc.ipv6_cidr_block
+}
